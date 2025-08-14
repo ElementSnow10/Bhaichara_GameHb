@@ -1,3 +1,4 @@
+Anvesh Lord
 # Flappy Bird Game with User Authentication & Leaderboard
 
 A modern implementation of the classic Flappy Bird game with user authentication, personal profiles, and a global leaderboard system.
@@ -125,3 +126,4 @@ This project is open source and available under the MIT License.
 ---
 
 **Enjoy playing Flappy Bird with your friends and compete for the highest score!** 🐦🏆
+
