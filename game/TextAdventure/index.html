@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystic Realms - Text Adventure</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🌙 Mystic Realms</h1>
+            <div class="stats">
+                <span id="health">❤️ Health: 100</span>
+                <span id="gold">💰 Gold: 0</span>
+                <span id="level">⭐ Level: 1</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="story-area">
+                <div id="story-text" class="story-text">
+                    Welcome to Mystic Realms, brave adventurer! Your journey begins in the ancient village of Eldoria, where legends speak of a powerful artifact hidden deep within the Forbidden Forest. Choose your path wisely, for every decision shapes your destiny...
+                </div>
+                
+                <div class="character-info" id="character-info">
+                    <h3>Your Character</h3>
+                    <div id="character-stats"></div>
+                </div>
+            </div>
+            
+            <div class="choices-area">
+                <div id="choices" class="choices">
+                    <button class="choice-btn" onclick="makeChoice(1)">Enter the Forbidden Forest</button>
+                    <button class="choice-btn" onclick="makeChoice(2)">Visit the Village Elder</button>
+                    <button class="choice-btn" onclick="makeChoice(3)">Check the Market Square</button>
+                </div>
+            </div>
+            
+            <div class="inventory-area">
+                <h3>🎒 Inventory</h3>
+                <div id="inventory" class="inventory"></div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="save-btn" onclick="saveGame()">💾 Save Game</button>
+            <button id="load-btn" onclick="loadGame()">📂 Load Game</button>
+            <button id="restart-btn" onclick="restartGame()">🔄 Restart</button>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
