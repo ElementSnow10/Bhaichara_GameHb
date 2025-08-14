@@ -1,0 +1,95 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#98FB98;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bikeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c0392b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky -->
+  <rect width="200" height="200" fill="url(#bgGradient)"/>
+  
+  <!-- Road -->
+  <rect x="0" y="140" width="200" height="60" fill="#8B4513"/>
+  <line x1="0" y1="150" x2="200" y2="150" stroke="#ffffff" stroke-width="3" stroke-dasharray="10,10"/>
+  
+  <!-- Buildings in background -->
+  <rect x="20" y="80" width="25" height="60" fill="#2c3e50"/>
+  <rect x="25" y="85" width="5" height="5" fill="#f39c12"/>
+  <rect x="35" y="85" width="5" height="5" fill="#f39c12"/>
+  <rect x="25" y="95" width="5" height="5" fill="#f39c12"/>
+  <rect x="35" y="95" width="5" height="5" fill="#f39c12"/>
+  
+  <rect x="60" y="70" width="30" height="70" fill="#34495e"/>
+  <rect x="65" y="75" width="5" height="5" fill="#f39c12"/>
+  <rect x="75" y="75" width="5" height="5" fill="#f39c12"/>
+  <rect x="85" y="75" width="5" height="5" fill="#f39c12"/>
+  <rect x="65" y="85" width="5" height="5" fill="#f39c12"/>
+  <rect x="75" y="85" width="5" height="5" fill="#f39c12"/>
+  <rect x="85" y="85" width="5" height="5" fill="#f39c12"/>
+  
+  <rect x="110" y="85" width="20" height="55" fill="#2c3e50"/>
+  <rect x="115" y="90" width="5" height="5" fill="#f39c12"/>
+  <rect x="125" y="90" width="5" height="5" fill="#f39c12"/>
+  <rect x="115" y="100" width="5" height="5" fill="#f39c12"/>
+  <rect x="125" y="100" width="5" height="5" fill="#f39c12"/>
+  
+  <!-- Trees -->
+  <circle cx="40" cy="130" r="15" fill="#27ae60"/>
+  <rect x="37" y="130" width="6" height="20" fill="#8B4513"/>
+  
+  <circle cx="160" cy="125" r="12" fill="#27ae60"/>
+  <rect x="158" y="125" width="4" height="15" fill="#8B4513"/>
+  
+  <!-- Clouds -->
+  <circle cx="80" cy="40" r="8" fill="rgba(255,255,255,0.8)"/>
+  <circle cx="90" cy="40" r="6" fill="rgba(255,255,255,0.8)"/>
+  <circle cx="70" cy="40" r="6" fill="rgba(255,255,255,0.8)"/>
+  
+  <circle cx="140" cy="30" r="10" fill="rgba(255,255,255,0.8)"/>
+  <circle cx="150" cy="30" r="8" fill="rgba(255,255,255,0.8)"/>
+  <circle cx="130" cy="30" r="8" fill="rgba(255,255,255,0.8)"/>
+  
+  <!-- Racing Bike -->
+  <g transform="translate(100, 120)">
+    <!-- Bike body -->
+    <rect x="-25" y="-8" width="50" height="16" rx="8" fill="url(#bikeGradient)"/>
+    <rect x="-20" y="-5" width="40" height="10" rx="5" fill="#2c3e50"/>
+    
+    <!-- Wheels -->
+    <circle cx="-15" cy="8" r="8" fill="#34495e" stroke="#2c3e50" stroke-width="2"/>
+    <circle cx="15" cy="8" r="8" fill="#34495e" stroke="#2c3e50" stroke-width="2"/>
+    <circle cx="-15" cy="8" r="3" fill="#95a5a6"/>
+    <circle cx="15" cy="8" r="3" fill="#95a5a6"/>
+    
+    <!-- Handlebar -->
+    <line x1="-25" y1="-8" x2="25" y2="-8" stroke="#2c3e50" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Rider (simplified) -->
+    <circle cx="0" cy="-15" r="6" fill="#ecf0f1"/>
+    <rect x="-2" y="-25" width="4" height="10" fill="#34495e"/>
+    
+    <!-- Speed lines -->
+    <line x1="30" y1="-5" x2="40" y2="-8" stroke="#e74c3c" stroke-width="2" opacity="0.7"/>
+    <line x1="30" y1="0" x2="40" y2="-3" stroke="#e74c3c" stroke-width="2" opacity="0.7"/>
+    <line x1="30" y1="5" x2="40" y2="2" stroke="#e74c3c" stroke-width="2" opacity="0.7"/>
+  </g>
+  
+  <!-- Obstacle -->
+  <rect x="180" y="120" width="15" height="20" fill="#e74c3c"/>
+  <rect x="182" y="120" width="3" height="20" fill="#ffffff"/>
+  <rect x="188" y="120" width="3" height="20" fill="#ffffff"/>
+  
+  <!-- Fuel can -->
+  <rect x="170" y="100" width="12" height="18" fill="#f39c12"/>
+  <rect x="168" y="98" width="16" height="4" fill="#e67e22"/>
+  <text x="175" y="112" font-family="Arial" font-size="8" fill="#ffffff">⛽</text>
+  
+  <!-- Game title -->
+  <text x="100" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#2c3e50">RACING BIKE</text>
+</svg>

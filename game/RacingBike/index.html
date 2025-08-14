@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racing Bike - Speed Thrills</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>🏍️ Racing Bike</h1>
+            <div class="score-board">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="distance">Distance: <span id="distance">0</span>m</div>
+                <div class="speed">Speed: <span id="speed">0</span> km/h</div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            
+            <div class="game-overlay" id="gameOverlay">
+                <div class="start-screen" id="startScreen">
+                    <h2>🏍️ Racing Bike</h2>
+                    <p>Use arrow keys or WASD to control your bike</p>
+                    <p>Dodge obstacles and collect fuel</p>
+                    <button id="startBtn" class="start-btn">Start Game</button>
+                </div>
+                
+                <div class="game-over-screen" id="gameOverScreen" style="display: none;">
+                    <h2>Game Over!</h2>
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                    <p>Distance: <span id="finalDistance">0</span>m</p>
+                    <button id="restartBtn" class="restart-btn">Play Again</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-info">
+            <p>🔄 Arrow Keys / WASD - Move | Space - Boost</p>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
