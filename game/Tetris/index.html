@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris - Classic Block Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🧩 Tetris</h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="label">Score</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Level</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Lines</span>
+                    <span id="lines">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="game-board">
+                <canvas id="gameCanvas" width="300" height="600"></canvas>
+                <div class="game-overlay" id="gameOverlay">
+                    <div class="overlay-content">
+                        <h2 id="overlayTitle">Game Over</h2>
+                        <p id="overlayMessage">Press Space to restart</p>
+                        <button id="restartBtn" onclick="restartGame()">Play Again</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="side-panel">
+                <div class="next-piece">
+                    <h3>Next</h3>
+                    <canvas id="nextCanvas" width="120" height="120"></canvas>
+                </div>
+                
+                <div class="controls">
+                    <h3>Controls</h3>
+                    <div class="control-item">
+                        <span class="key">← →</span>
+                        <span class="action">Move</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">↓</span>
+                        <span class="action">Soft Drop</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">↑</span>
+                        <span class="action">Rotate</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Space</span>
+                        <span class="action">Hard Drop</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">P</span>
+                        <span class="action">Pause</span>
+                    </div>
+                </div>
+                
+                <div class="high-score">
+                    <h3>High Score</h3>
+                    <div id="highScore">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-bottom">
+            <button id="pauseBtn" onclick="togglePause()">⏸️ Pause</button>
+            <button id="newGameBtn" onclick="restartGame()">🔄 New Game</button>
+        </div>
+    </div>
+    
+    <script src="tetris.js"></script>
+</body>
+</html>
