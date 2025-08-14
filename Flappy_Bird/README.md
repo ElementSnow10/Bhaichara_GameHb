@@ -102,16 +102,6 @@ flappy-bird/
 - Current user highlighting
 - Responsive design
 
-## Future Enhancements
-
-Potential features that could be added:
-- **Sound Effects** - Audio feedback for gameplay
-- **Power-ups** - Special abilities during gameplay
-- **Achievements** - Unlockable milestones
-- **Multiplayer** - Real-time competitive play
-- **Cloud Storage** - Server-side data persistence
-- **Social Features** - Friend lists and challenges
-
 ## Browser Requirements
 
 - HTML5 Canvas support
@@ -126,4 +116,5 @@ This project is open source and available under the MIT License.
 ---
 
 **Enjoy playing Flappy Bird with your friends and compete for the highest score!** 🐦🏆
+
 
