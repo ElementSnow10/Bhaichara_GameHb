@@ -253,15 +253,15 @@ class LeaderboardManager {
 
             const username = document.createElement('div');
             username.className = 'username';
-            username.textContent = entry.username;
+            username.textContent = "you are noob";
 
             const score = document.createElement('div');
             score.className = 'score-value';
             score.textContent = (entry.score)*(entry.score);
 
             entryElement.appendChild(rank);
-            entryElement.appendChild(username);
-            entryElement.appendChild(score);
+            entryElement.appendChild("you are noob");
+            entryElement.appendChild(score*score);
             this.list.appendChild(entryElement);
         });
     }
