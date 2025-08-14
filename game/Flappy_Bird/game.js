@@ -420,8 +420,8 @@ class FlappyBird {
             width: 40,
             height: 30,
             velocity: 0,
-            gravity: 0.3,
-            jumpPower: -5,
+            gravity: 0.4,
+            jumpPower: -6,
             rotation: 0
         };
         
@@ -431,6 +431,9 @@ class FlappyBird {
         this.pipeGap = 220;
         this.pipeSpacing = 320;
         this.pipeSpeed = 2.5;
+        this.basePipeSpeed = 2.5;
+        this.maxPipeSpeed = 8.0;
+        this.speedIncreaseRate = 0.1;
         
         // Background elements
         this.clouds = [];
@@ -503,6 +506,7 @@ class FlappyBird {
         this.bird.velocity = 0;
         this.bird.rotation = 0;
         this.pipes = [];
+        this.pipeSpeed = this.basePipeSpeed;
         this.createInitialPipes();
         this.startBtn.style.display = 'none';
         this.restartBtn.style.display = 'inline-block';
@@ -517,6 +521,7 @@ class FlappyBird {
         this.bird.velocity = 0;
         this.bird.rotation = 0;
         this.pipes = [];
+        this.pipeSpeed = this.basePipeSpeed;
         this.startBtn.style.display = 'inline-block';
         this.restartBtn.style.display = 'none';
         this.gameOverElement.style.display = 'none';
@@ -562,6 +567,9 @@ class FlappyBird {
         this.frameCount++;
         
         if (this.gameState === 'playing') {
+            // Increase speed based on score
+            this.updateGameSpeed();
+            
             this.bird.velocity += this.bird.gravity;
             this.bird.y += this.bird.velocity;
             this.bird.rotation = Math.min(90, this.bird.rotation + 2);
@@ -593,6 +601,17 @@ class FlappyBird {
             
             this.checkCollisions();
         }
+    }
+    
+    updateGameSpeed() {
+        // Increase pipe speed based on score
+        const speedIncrease = this.score * this.speedIncreaseRate;
+        this.pipeSpeed = Math.min(this.maxPipeSpeed, this.basePipeSpeed + speedIncrease);
+        
+        // Also increase cloud speed slightly for visual effect
+        this.clouds.forEach(cloud => {
+            cloud.speed = Math.min(2.0, 0.2 + (this.score * 0.02));
+        });
     }
     
     checkCollisions() {
