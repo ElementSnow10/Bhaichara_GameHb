@@ -257,7 +257,7 @@ class LeaderboardManager {
 
             const score = document.createElement('div');
             score.className = 'score-value';
-            score.textContent = entry.score;
+            score.textContent = (entry.score)*(entry.score);
 
             entryElement.appendChild(rank);
             entryElement.appendChild(username);
