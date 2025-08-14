@@ -118,40 +118,58 @@ class LeaderboardManager {
     }
 
     setupEventListeners() {
-        document.getElementById('leaderboardBtn').addEventListener('click', () => {
-            this.showLeaderboard();
-        });
+        const openBtn = document.getElementById('leaderboardBtn');
+        const closeBtn = document.getElementById('closeLeaderboard');
 
-        document.getElementById('closeLeaderboard').addEventListener('click', () => {
-            this.hideLeaderboard();
-        });
-
-        this.tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                this.switchTab(tab.dataset.tab);
+        if (openBtn) {
+            openBtn.addEventListener('click', () => {
+                this.showLeaderboard();
             });
-        });
+        }
 
-        this.modal.addEventListener('click', (e) => {
-            if (e.target === this.modal) {
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
                 this.hideLeaderboard();
-            }
-        });
+            });
+        }
+
+        if (this.tabs && this.tabs.length) {
+            this.tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    this.switchTab(tab.dataset.tab);
+                });
+            });
+        }
+
+        if (this.modal) {
+            this.modal.addEventListener('click', (e) => {
+                if (e.target === this.modal) {
+                    this.hideLeaderboard();
+                }
+            });
+        }
     }
 
     showLeaderboard() {
-        this.modal.style.display = 'flex';
+        if (this.modal) {
+            this.modal.style.display = 'flex';
+        }
         this.updateLeaderboard();
     }
 
     hideLeaderboard() {
-        this.modal.style.display = 'none';
+        if (this.modal) {
+            this.modal.style.display = 'none';
+        }
     }
 
     switchTab(tab) {
         this.currentTab = tab;
         this.tabs.forEach(t => t.classList.remove('active'));
-        document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+        const activeTab = document.querySelector(`[data-tab="${tab}"]`);
+        if (activeTab) {
+            activeTab.classList.add('active');
+        }
         this.updateLeaderboard();
     }
 
@@ -281,7 +299,17 @@ class LoginManager {
         this.loginScreen.style.display = 'none';
         this.gameContainer.style.display = 'block';
         this.currentUserSpan.textContent = this.userManager.getCurrentUser();
-        this.game.updateBestScore();
+        // Ensure UI is in a good state after login and start playing
+        if (this.game && typeof this.game.updateBestScore === 'function') {
+            this.game.updateBestScore();
+        }
+        if (this.game && typeof this.game.startGame === 'function') {
+            this.game.startGame();
+        }
+        // Focus game area
+        try {
+            this.gameContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (_) {}
     }
 
     showLogin() {
@@ -311,11 +339,6 @@ class FlappyBird {
         this.ctx = this.canvas.getContext('2d');
         this.width = this.canvas.width;
         this.height = this.canvas.height;
-        
-        // Initialize managers
-        this.userManager = new UserManager();
-        this.leaderboardManager = new LeaderboardManager(this.userManager);
-        this.loginManager = new LoginManager(this.userManager, this);
         
         // Game state
         this.gameState = 'menu';
@@ -356,7 +379,12 @@ class FlappyBird {
         this.restartBtn = document.getElementById('restartBtn');
         this.gameOverElement = document.getElementById('gameOver');
         this.playAgainBtn = document.getElementById('playAgainBtn');
-        
+
+        // Initialize managers (after UI elements are ready)
+        this.userManager = new UserManager();
+        this.leaderboardManager = new LeaderboardManager(this.userManager);
+        this.loginManager = new LoginManager(this.userManager, this);
+
         this.init();
     }
     
@@ -377,20 +405,26 @@ class FlappyBird {
             }
         });
         
-        this.canvas.addEventListener('click', () => {
-            if (this.gameState === 'playing') {
-                this.jump();
-            }
-        });
+        if (this.canvas) {
+            this.canvas.addEventListener('click', () => {
+                if (this.gameState === 'playing') {
+                    this.jump();
+                }
+            });
+        }
         
-        this.startBtn.addEventListener('click', () => this.startGame());
-        this.restartBtn.addEventListener('click', () => this.restart());
-        this.playAgainBtn.addEventListener('click', () => this.restart());
+        if (this.startBtn) this.startBtn.addEventListener('click', () => this.startGame());
+        if (this.restartBtn) this.restartBtn.addEventListener('click', () => this.restart());
+        if (this.playAgainBtn) this.playAgainBtn.addEventListener('click', () => this.restart());
     }
     
     startGame() {
         if (!this.userManager.isLoggedIn()) {
-            alert('Please login to play!');
+            if (this.loginManager && typeof this.loginManager.showLogin === 'function') {
+                this.loginManager.showLogin();
+            } else {
+                alert('Please login to play!');
+            }
             return;
         }
         
