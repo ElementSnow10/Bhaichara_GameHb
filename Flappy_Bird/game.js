@@ -50,7 +50,7 @@ class UserManager {
         localStorage.removeItem('flappyBirdCurrentUser');
     }
 
-    updateScore(score) {
+    async updateScore(score) {
         if (!this.currentUser) return;
         
         const user = this.users[this.currentUser];
@@ -60,6 +60,11 @@ class UserManager {
         if (score > user.bestScore) {
             user.bestScore = score;
             this.updateLeaderboard(this.currentUser, score);
+            try {
+                if (window.globalLeaderboardService) {
+                    await window.globalLeaderboardService.submitScore(this.currentUser, score);
+                }
+            } catch (_) {}
         }
         
         this.saveUsers();
@@ -105,6 +110,51 @@ class UserManager {
     }
 }
 
+// Global Leaderboard Backend (Firestore)
+class GlobalLeaderboardService {
+    constructor(firestore) {
+        this.db = firestore;
+        this.collectionName = 'flappyBirdGlobalScores';
+    }
+
+    async submitScore(username, score) {
+        if (!username || typeof score !== 'number') return;
+        const docRef = this.db.collection(this.collectionName).doc(username);
+        await this.db.runTransaction(async (tx) => {
+            const doc = await tx.get(docRef);
+            if (!doc.exists) {
+                tx.set(docRef, {
+                    username: username,
+                    bestScore: score,
+                    updatedAt: Date.now(),
+                });
+            } else {
+                const current = doc.data();
+                const newBest = Math.max(current.bestScore || 0, score);
+                if (newBest !== (current.bestScore || 0)) {
+                    tx.update(docRef, { bestScore: newBest, updatedAt: Date.now() });
+                } else {
+                    tx.update(docRef, { updatedAt: Date.now() });
+                }
+            }
+        });
+    }
+
+    async fetchTopScores(limit = 100) {
+        const snapshot = await this.db
+            .collection(this.collectionName)
+            .orderBy('bestScore', 'desc')
+            .limit(limit)
+            .get();
+        const results = [];
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            results.push({ username: data.username, score: data.bestScore });
+        });
+        return results;
+    }
+}
+
 // Leaderboard Manager
 class LeaderboardManager {
     constructor(userManager) {
@@ -115,6 +165,8 @@ class LeaderboardManager {
         this.currentTab = 'global';
         
         this.setupEventListeners();
+        this.globalEntries = [];
+        this.isUsingGlobal = false;
     }
 
     setupEventListeners() {
@@ -150,10 +202,11 @@ class LeaderboardManager {
         }
     }
 
-    showLeaderboard() {
+    async showLeaderboard() {
         if (this.modal) {
             this.modal.style.display = 'flex';
         }
+        await this.refreshFromBackendIfAvailable();
         this.updateLeaderboard();
     }
 
@@ -163,18 +216,21 @@ class LeaderboardManager {
         }
     }
 
-    switchTab(tab) {
+    async switchTab(tab) {
         this.currentTab = tab;
         this.tabs.forEach(t => t.classList.remove('active'));
         const activeTab = document.querySelector(`[data-tab="${tab}"]`);
         if (activeTab) {
             activeTab.classList.add('active');
         }
+        await this.refreshFromBackendIfAvailable();
         this.updateLeaderboard();
     }
 
     updateLeaderboard() {
-        const entries = this.userManager.getLeaderboard(this.currentTab);
+        const entries = this.isUsingGlobal && this.currentTab === 'global'
+            ? this.globalEntries
+            : this.userManager.getLeaderboard(this.currentTab);
         const currentUser = this.userManager.getCurrentUser();
         
         this.list.innerHTML = '';
@@ -208,6 +264,19 @@ class LeaderboardManager {
             entryElement.appendChild(score);
             this.list.appendChild(entryElement);
         });
+    }
+
+    async refreshFromBackendIfAvailable() {
+        try {
+            if (window.globalLeaderboardService && this.currentTab === 'global') {
+                this.isUsingGlobal = true;
+                this.globalEntries = await window.globalLeaderboardService.fetchTopScores(100);
+            } else {
+                this.isUsingGlobal = false;
+            }
+        } catch (_) {
+            this.isUsingGlobal = false;
+        }
     }
 }
 
@@ -690,5 +759,14 @@ class FlappyBird {
 
 // Initialize game when page loads
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize global leaderboard backend if credentials are provided
+    try {
+        if (window.firebase && window.firebaseConfig) {
+            window.firebase.initializeApp(window.firebaseConfig);
+            const firestore = window.firebase.firestore();
+            window.globalLeaderboardService = new GlobalLeaderboardService(firestore);
+        }
+    } catch (_) {}
+
     new FlappyBird();
 });
