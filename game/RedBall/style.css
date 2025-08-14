@@ -1,0 +1,266 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    overflow-x: hidden;
+}
+
+.game-container {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    max-width: 900px;
+    width: 95%;
+}
+
+.game-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 0px #000;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+    from { filter: drop-shadow(0 0 5px rgba(255, 107, 107, 0.5)); }
+    to { filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.8)); }
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.level-info {
+    display: flex;
+    gap: 20px;
+    font-size: 1rem;
+}
+
+.level-info span {
+    color: #4ecdc4;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+}
+
+.game-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#gameCanvas {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    background: linear-gradient(135deg, #87CEEB 0%, #98FB98 100%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 100%;
+    height: auto;
+}
+
+/* Game Overlay */
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    z-index: 1000;
+}
+
+.overlay-content {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid #4ecdc4;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    animation: overlaySlide 0.5s ease-out;
+}
+
+@keyframes overlaySlide {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.overlay-content h2 {
+    color: #4ecdc4;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.overlay-content p {
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.overlay-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Instructions */
+.instructions {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+    max-width: 800px;
+    width: 100%;
+}
+
+.instructions h3 {
+    color: #4ecdc4;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.instructions p {
+    color: #e0e0e0;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.instructions strong {
+    color: #ff6b6b;
+}
+
+/* Buttons */
+.game-btn {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+}
+
+.game-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .game-container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .game-header h1 {
+        font-size: 2rem;
+    }
+    
+    .game-info {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .level-info {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .controls {
+        justify-content: center;
+    }
+    
+    #gameCanvas {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+    }
+    
+    .overlay-content {
+        padding: 30px 20px;
+        margin: 10px;
+    }
+    
+    .overlay-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .overlay-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .game-btn {
+        padding: 10px 20px;
+        font-size: 0.7rem;
+    }
+    
+    .instructions {
+        padding: 15px;
+    }
+    
+    .instructions h3 {
+        font-size: 1rem;
+    }
+    
+    .instructions p {
+        font-size: 0.7rem;
+    }
+}

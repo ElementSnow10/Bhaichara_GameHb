@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Ball Adventure</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Game Container -->
+    <div class="game-container">
+        <div class="game-header">
+            <h1>Red Ball Adventure</h1>
+            <div class="game-info">
+                <div class="level-info">
+                    <span>Level: <span id="currentLevel">1</span></span>
+                    <span>Score: <span id="score">0</span></span>
+                </div>
+                <div class="controls">
+                    <button id="restartBtn" class="game-btn">Restart</button>
+                    <button id="nextLevelBtn" class="game-btn" style="display: none;">Next Level</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            
+            <!-- Game Overlay -->
+            <div id="gameOverlay" class="game-overlay" style="display: none;">
+                <div class="overlay-content">
+                    <h2 id="overlayTitle">Level Complete!</h2>
+                    <p id="overlayMessage">Great job! You completed the level.</p>
+                    <div class="overlay-buttons">
+                        <button id="playAgainBtn" class="game-btn">Play Again</button>
+                        <button id="nextLevelOverlayBtn" class="game-btn">Next Level</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Instructions -->
+            <div class="instructions">
+                <h3>How to Play:</h3>
+                <p>Use <strong>Arrow Keys</strong> or <strong>WASD</strong> to move the red ball</p>
+                <p>Avoid obstacles and reach the green goal to complete each level</p>
+                <p>Collect coins for bonus points!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

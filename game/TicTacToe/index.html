@@ -4,65 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
+    <!-- Player Setup Screen -->
+    <div id="playerSetup" class="player-setup">
+        <div class="setup-container">
             <h1>Tic Tac Toe</h1>
-            <div class="game-info">
-                <div class="player-info">
-                    <div class="player player-x active">
-                        <span class="player-symbol">X</span>
-                        <span class="player-name">Player X</span>
-                        <span class="player-score">0</span>
-                    </div>
-                    <div class="player player-o">
-                        <span class="player-symbol">O</span>
-                        <span class="player-name">Player O</span>
-                        <span class="player-score">0</span>
-                    </div>
+            <div class="setup-form">
+                <h2>Enter Player Names</h2>
+                <div class="input-group">
+                    <label for="player1Name">Player 1 (X):</label>
+                    <input type="text" id="player1Name" placeholder="Enter Player 1 Name" maxlength="15" value="Player 1">
                 </div>
-                <div class="current-turn">
-                    <span>Current Turn: </span>
-                    <span class="turn-indicator">X</span>
+                <div class="input-group">
+                    <label for="player2Name">Player 2 (O):</label>
+                    <input type="text" id="player2Name" placeholder="Enter Player 2 Name" maxlength="15" value="Player 2">
                 </div>
-            </div>
-        </header>
-
-        <main>
-            <div class="game-board">
-                <div class="cell" data-index="0"></div>
-                <div class="cell" data-index="1"></div>
-                <div class="cell" data-index="2"></div>
-                <div class="cell" data-index="3"></div>
-                <div class="cell" data-index="4"></div>
-                <div class="cell" data-index="5"></div>
-                <div class="cell" data-index="6"></div>
-                <div class="cell" data-index="7"></div>
-                <div class="cell" data-index="8"></div>
-            </div>
-
-            <div class="game-controls">
-                <button class="btn btn-primary" id="newGameBtn">New Game</button>
-                <button class="btn btn-secondary" id="resetScoreBtn">Reset Score</button>
-            </div>
-
-            <div class="game-status" id="gameStatus"></div>
-        </main>
-
-        <div class="modal" id="winModal">
-            <div class="modal-content">
-                <h2 id="winMessage"></h2>
-                <div class="modal-buttons">
-                    <button class="btn btn-primary" id="playAgainBtn">Play Again</button>
-                    <button class="btn btn-secondary" id="closeModalBtn">Close</button>
-                </div>
+                <button id="startGameBtn" class="game-btn">Start Game</button>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Game Container -->
+    <div id="gameContainer" class="game-container" style="display: none;">
+        <div class="game-header">
+            <h1>Tic Tac Toe</h1>
+            <div class="player-info">
+                <div class="current-player">
+                    <span>Current Turn: <span id="currentPlayer">Player 1</span></span>
+                </div>
+                <button id="newGameBtn" class="game-btn">New Game</button>
+            </div>
+            <div class="score-display">
+                <div class="player-score">
+                    <span id="player1Display">Player 1</span>: <span id="player1Score">0</span>
+                </div>
+                <div class="player-score">
+                    <span id="player2Display">Player 2</span>: <span id="player2Score">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-board">
+            <div class="board-row">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+            </div>
+            <div class="board-row">
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+            </div>
+            <div class="board-row">
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+        </div>
+        
+        <div id="gameResult" class="game-result" style="display: none;">
+            <h2 id="resultMessage">Game Over!</h2>
+            <button id="playAgainBtn" class="game-btn">Play Again</button>
+            <button id="backToSetupBtn" class="game-btn">Change Players</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
 </body>
 </html>

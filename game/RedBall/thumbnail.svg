@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+    <linearGradient id="ballGradient" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ff4444"/>
+      <stop offset="100%" stop-color="#cc0000"/>
+    </linearGradient>
+    <linearGradient id="platformGradient" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#8B4513"/>
+      <stop offset="100%" stop-color="#654321"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="skyGradient" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#87CEEB"/>
+      <stop offset="100%" stop-color="#98FB98"/>
+    </linearGradient>
+  </defs>
+  <rect x="50" y="50" width="700" height="350" fill="url(#skyGradient)" rx="20"/>
+  
+  <!-- Platforms -->
+  <rect x="100" y="320" width="120" height="20" fill="url(#platformGradient)" rx="5"/>
+  <rect x="300" y="260" width="120" height="20" fill="url(#platformGradient)" rx="5"/>
+  <rect x="500" y="300" width="120" height="20" fill="url(#platformGradient)" rx="5"/>
+  <rect x="700" y="240" width="120" height="20" fill="url(#platformGradient)" rx="5"/>
+  
+  <!-- Ground -->
+  <rect x="50" y="370" width="700" height="30" fill="url(#platformGradient)" rx="5"/>
+  
+  <!-- Red Ball (main character) -->
+  <circle cx="150" cy="300" r="20" fill="url(#ballGradient)"/>
+  <circle cx="145" cy="295" r="5" fill="#ffcccc"/>
+  
+  <!-- Coins -->
+  <circle cx="250" cy="290" r="8" fill="#FFD700"/>
+  <circle cx="248" cy="288" r="2" fill="#FFF"/>
+  <circle cx="450" cy="230" r="8" fill="#FFD700"/>
+  <circle cx="448" cy="228" r="2" fill="#FFF"/>
+  <circle cx="650" cy="270" r="8" fill="#FFD700"/>
+  <circle cx="648" cy="268" r="2" fill="#FFF"/>
+  
+  <!-- Goal -->
+  <rect x="720" y="210" width="40" height="40" fill="#00FF00" rx="5"/>
+  <text x="740" y="235" text-anchor="middle" font-family="Arial" font-size="20" fill="#fff" font-weight="bold">✓</text>
+  
+  <!-- Obstacles (spikes) -->
+  <polygon points="350,370 360,330 370,370" fill="#FF0000"/>
+  <polygon points="550,370 560,330 570,370" fill="#FF0000"/>
+  
+  <!-- Title -->
+  <text x="50%" y="80" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="28" fill="#ffffff" stroke="#000000" stroke-width="2">RED BALL ADVENTURE</text>
+</svg>
