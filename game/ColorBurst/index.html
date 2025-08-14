@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Burst - Arcade Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🎨 Color Burst</h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="label">Score</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Level</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Lives</span>
+                    <span id="lives">3</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Combo</span>
+                    <span id="combo">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="game-board">
+                <canvas id="gameCanvas" width="400" height="600"></canvas>
+                <div class="game-overlay" id="gameOverlay">
+                    <div class="overlay-content">
+                        <h2 id="overlayTitle">Game Over!</h2>
+                        <p id="overlayMessage">Try again to beat your high score!</p>
+                        <button id="restartBtn" onclick="restartGame()">Play Again</button>
+                    </div>
+                </div>
+                <div class="pause-overlay" id="pauseOverlay">
+                    <div class="overlay-content">
+                        <h2>⏸️ Paused</h2>
+                        <p>Press P to resume</p>
+                        <button onclick="togglePause()">Resume</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="side-panel">
+                <div class="controls">
+                    <h3>Controls</h3>
+                    <div class="control-item">
+                        <span class="key">← →</span>
+                        <span class="action">Move</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Space</span>
+                        <span class="action">Pause</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Swipe</span>
+                        <span class="action">Mobile</span>
+                    </div>
+                </div>
+                
+                <div class="objective">
+                    <h3>Objective</h3>
+                    <p>Guide colored blocks to their matching zones!</p>
+                    <div class="color-zones">
+                        <div class="color-zone red"></div>
+                        <div class="color-zone blue"></div>
+                        <div class="color-zone green"></div>
+                        <div class="color-zone yellow"></div>
+                    </div>
+                </div>
+                
+                <div class="powerups">
+                    <h3>Power-ups</h3>
+                    <div class="powerup-item">
+                        <div class="powerup-icon">⚡</div>
+                        <span>Slow Motion</span>
+                    </div>
+                    <div class="powerup-item">
+                        <div class="powerup-icon">🎯</div>
+                        <span>Auto-Guide</span>
+                    </div>
+                    <div class="powerup-item">
+                        <div class="powerup-icon">💎</div>
+                        <span>Shield</span>
+                    </div>
+                </div>
+                
+                <div class="high-score">
+                    <h3>High Score</h3>
+                    <div id="highScore">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-bottom">
+            <button id="pauseBtn" onclick="togglePause()">⏸️ Pause</button>
+            <button id="newGameBtn" onclick="restartGame()">🔄 New Game</button>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
