@@ -102,6 +102,29 @@ const scenes = {
             { text: "Return to the village", nextScene: "start" }
         ]
     },
+    dark_cave: {
+        text: "The cave air is damp and cold. Whispering winds curl around you as shadows dance along the walls.",
+        choices: [
+            { text: "Search deeper into the darkness", nextScene: "dark_cave" },
+            { text: "Carefully back out", nextScene: "forest_entrance" }
+        ]
+    },
+    ancient_ruins: {
+        text: "Crumbling stone and faded carvings hint at a civilization lost to time.",
+        choices: [
+            { text: "Study the carvings", nextScene: "ancient_ruins" },
+            { text: "Search the rubble for valuables", nextScene: "ancient_ruins" },
+            { text: "Return to the forest entrance", nextScene: "forest_entrance" }
+        ]
+    },
+    mystic_grove: {
+        text: "A serene grove bathed in ethereal light. You feel safe here.",
+        choices: [
+            { text: "Meditate among the glowing flora", nextScene: "mystic_grove" },
+            { text: "Gather luminescent flowers", nextScene: "mystic_grove" },
+            { text: "Return to the forest entrance", nextScene: "forest_entrance" }
+        ]
+    },
     elder_hut: {
         text: "You enter Elder Thorne's humble hut. The air is thick with the scent of herbs and old books. The elder sits by a crackling fire, his wise eyes studying you intently.",
         choices: [
@@ -109,6 +132,24 @@ const scenes = {
             { text: "Seek advice about the village", nextScene: "elder_village_advice" },
             { text: "Learn about local history", nextScene: "elder_history" },
             { text: "Return to the village", nextScene: "start" }
+        ]
+    },
+    elder_artifact_quest: {
+        text: "The Crystal of Aethon lies deep within the forest, guarded by ancient wards and creatures of shadow.",
+        choices: [
+            { text: "Thank the Elder and return", nextScene: "elder_hut" }
+        ]
+    },
+    elder_village_advice: {
+        text: "Stay vigilant at night and keep allies close. The village thrives when we help one another.",
+        choices: [
+            { text: "Reflect on his wisdom", nextScene: "elder_hut" }
+        ]
+    },
+    elder_history: {
+        text: "Eldoria was founded by seekers of knowledge who respected the balance of nature and magic.",
+        choices: [
+            { text: "Return to the Elder's hut", nextScene: "elder_hut" }
         ]
     },
     market_square: {
@@ -119,13 +160,41 @@ const scenes = {
             { text: "Talk to the locals", nextScene: "market_gossip" },
             { text: "Return to the village center", nextScene: "start" }
         ]
+    },
+    merchant_shop: {
+        text: "Zara greets you with a warm smile. Shelves brim with curiosities and potions.",
+        choices: [
+            { text: "Buy Health Potion (25g)", nextScene: "merchant_shop" },
+            { text: "Buy Magic Scroll (50g)", nextScene: "merchant_shop" },
+            { text: "Chat with Zara", nextScene: "merchant_shop" },
+            { text: "Return to the market", nextScene: "market_square" }
+        ]
+    },
+    blacksmith_shop: {
+        text: "Sparks fly as Gareth hammers steel. Weapons line the walls in neat rows.",
+        choices: [
+            { text: "Buy Enchanted Sword (150g)", nextScene: "blacksmith_shop" },
+            { text: "Ask about weapon upkeep", nextScene: "blacksmith_shop" },
+            { text: "Return to the market", nextScene: "market_square" }
+        ]
+    },
+    market_gossip: {
+        text: "You mingle with the locals, picking up rumors and odd jobs.",
+        choices: [
+            { text: "Help carry crates (+15g)", nextScene: "market_gossip" },
+            { text: "Listen to rumors (+EXP)", nextScene: "market_gossip" },
+            { text: "Return to the market", nextScene: "market_square" }
+        ]
     }
 };
 
 // Initialize the game
 function initGame() {
-    updateDisplay();
-    loadGame();
+	const loaded = loadGame(true);
+	if (!loaded) {
+		promptForName();
+	}
+	updateDisplay();
 }
 
 // Update the display
@@ -196,6 +265,40 @@ function updateInventory() {
     });
 }
 
+// Prompt the player to name their character
+function promptForName() {
+    let name = prompt('Name your character:', gameState.character.name || 'Adventurer');
+    if (name === null) name = 'Adventurer';
+    name = String(name).trim();
+    if (name.length === 0) name = 'Adventurer';
+    if (name.length > 20) name = name.slice(0, 20);
+    gameState.character.name = name;
+    gameState.flags.name_chosen = true;
+}
+
+// Economy helpers
+function gainGold(amount) {
+    gameState.gold += amount;
+    showMessage(`You gained ${amount} gold.`);
+}
+
+function spendGold(amount) {
+    if (gameState.gold < amount) {
+        showMessage('Not enough gold.');
+        return false;
+    }
+    gameState.gold -= amount;
+    return true;
+}
+
+function addItem(itemId, count = 1) {
+    for (let i = 0; i < count; i++) {
+        gameState.inventory.push(itemId);
+    }
+    const meta = items[itemId];
+    showMessage(`Obtained ${count > 1 ? count + 'x ' : ''}${meta ? meta.name : itemId}.`);
+}
+
 // Make a choice
 function makeChoice(choiceIndex) {
     const currentScene = scenes[gameState.currentScene];
@@ -225,6 +328,79 @@ function handleSceneLogic(sceneId, choiceIndex) {
                 gameState.flags.visited_grove = true;
                 addExperience(20);
                 gameState.health = Math.min(gameState.maxHealth, gameState.health + 20);
+            }
+            break;
+        case 'elder_hut':
+            if (choiceIndex === 0) {
+                gameState.flags.elder_artifact_quest = true;
+                addExperience(25);
+            } else if (choiceIndex === 1) {
+                gameState.character.intelligence += 2;
+                addExperience(15);
+            } else if (choiceIndex === 2) {
+                gameState.character.intelligence += 1;
+                addExperience(10);
+            }
+            break;
+        case 'merchant_shop':
+            if (choiceIndex === 0) { // Buy Health Potion (25)
+                if (spendGold(25)) addItem('health_potion', 1);
+            } else if (choiceIndex === 1) { // Buy Magic Scroll (50)
+                if (spendGold(50)) addItem('magic_scroll', 1);
+            } else if (choiceIndex === 2) { // Chat
+                gameState.character.charisma += 1;
+                showMessage('You chat with Zara and feel more confident (+1 Charisma).');
+            }
+            break;
+        case 'blacksmith_shop':
+            if (choiceIndex === 0) { // Buy Enchanted Sword (150)
+                if (spendGold(150)) addItem('enchanted_sword', 1);
+            } else if (choiceIndex === 1) { // Ask upkeep
+                showMessage('Gareth shares maintenance tips. Your weapon handling improves (+1 Strength).');
+                gameState.character.strength += 1;
+            }
+            break;
+        case 'market_gossip':
+            if (choiceIndex === 0) { // Help carry crates
+                if (!gameState.flags.helped_crates) {
+                    gameState.flags.helped_crates = true;
+                    gainGold(15);
+                    addExperience(5);
+                } else {
+                    showMessage("You've already helped today.");
+                }
+            } else if (choiceIndex === 1) { // Listen to rumors
+                addExperience(5);
+                showMessage('You pick up useful rumors about the forest.');
+            }
+            break;
+        case 'dark_cave':
+            if (choiceIndex === 0) { // Search deeper
+                addExperience(15);
+                gainGold(10);
+                addItem('health_potion', 1);
+            } else if (choiceIndex === 1) { // Carefully back out
+                showMessage('You retreat safely from the unsettling whispers.');
+            }
+            break;
+        case 'ancient_ruins':
+            if (choiceIndex === 0) { // Study carvings
+                addExperience(20);
+                gameState.character.intelligence += 1;
+                showMessage('The ancient symbols expand your understanding (+1 Intelligence).');
+            } else if (choiceIndex === 1) { // Search rubble
+                addExperience(10);
+                gainGold(20);
+            }
+            break;
+        case 'mystic_grove':
+            if (choiceIndex === 0) { // Meditate
+                gameState.health = gameState.maxHealth;
+                addExperience(10);
+                showMessage('A calming aura restores your vitality to full.');
+            } else if (choiceIndex === 1) { // Gather flowers
+                addExperience(5);
+                gainGold(5);
             }
             break;
     }
@@ -265,6 +441,17 @@ function useItem(itemId) {
     } else if (item.effect.strength) {
         gameState.character.strength += item.effect.strength;
         showMessage(`Used ${item.name}! +${item.effect.strength} strength.`);
+    } else if (item.effect.random) {
+        const pool = ['health_potion', 'magic_scroll'];
+        const randomItem = pool[Math.floor(Math.random() * pool.length)];
+        addItem(randomItem, 1);
+    } else if (item.effect.spell === 'random') {
+        if (!Array.isArray(gameState.flags.spells)) gameState.flags.spells = [];
+        const spells = ['Fireball', 'Heal', 'Invisibility'];
+        const learned = spells[Math.floor(Math.random() * spells.length)];
+        gameState.flags.spells.push(learned);
+        gameState.character.intelligence += 1;
+        showMessage(`You study the scroll and learn ${learned}! (+1 Intelligence)`);
     }
     
     updateDisplay();
@@ -289,16 +476,18 @@ function saveGame() {
 }
 
 // Load game
-function loadGame() {
+function loadGame(silent = false) {
     const savedGame = localStorage.getItem('mysticRealmsSave');
     if (savedGame) {
         try {
             gameState = JSON.parse(savedGame);
-            showMessage('📂 Game loaded successfully!');
+            if (!silent) showMessage('📂 Game loaded successfully!');
+            return true;
         } catch (e) {
             console.error('Error loading game:', e);
         }
     }
+    return false;
 }
 
 // Restart game
@@ -324,6 +513,7 @@ function restartGame() {
             companions: []
         };
         localStorage.removeItem('mysticRealmsSave');
+        promptForName();
         updateDisplay();
         showMessage('🔄 Game restarted!');
     }
