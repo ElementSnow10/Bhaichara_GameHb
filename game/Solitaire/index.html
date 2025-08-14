@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Game Header -->
+        <div class="game-header">
+            <h1>Solitaire</h1>
+            <div class="game-controls">
+                <button id="newGameBtn" class="btn btn-primary">New Game</button>
+                <button id="undoBtn" class="btn btn-secondary" disabled>Undo</button>
+                <div class="timer">Time: <span id="timer">00:00</span></div>
+                <div class="moves">Moves: <span id="moves">0</span></div>
+            </div>
+        </div>
+
+        <!-- Game Board -->
+        <div class="game-board">
+            <!-- Stock and Waste Pile -->
+            <div class="stock-waste">
+                <div class="stock-pile" id="stockPile">
+                    <div class="card-back"></div>
+                </div>
+                <div class="waste-pile" id="wastePile"></div>
+            </div>
+
+            <!-- Foundation Piles (Ace to King) -->
+            <div class="foundations" id="foundations">
+                <div class="foundation-pile" data-suit="hearts"></div>
+                <div class="foundation-pile" data-suit="diamonds"></div>
+                <div class="foundation-pile" data-suit="clubs"></div>
+                <div class="foundation-pile" data-suit="spades"></div>
+            </div>
+
+            <!-- Tableau Piles (7 columns) -->
+            <div class="tableau" id="tableau">
+                <div class="tableau-pile" data-index="0"></div>
+                <div class="tableau-pile" data-index="1"></div>
+                <div class="tableau-pile" data-index="2"></div>
+                <div class="tableau-pile" data-index="3"></div>
+                <div class="tableau-pile" data-index="4"></div>
+                <div class="tableau-pile" data-index="5"></div>
+                <div class="tableau-pile" data-index="6"></div>
+            </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div id="gameOverModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2>Congratulations!</h2>
+                <p>You've completed the game!</p>
+                <div class="game-stats">
+                    <p>Time: <span id="finalTime">00:00</span></p>
+                    <p>Moves: <span id="finalMoves">0</span></p>
+                </div>
+                <button id="playAgainBtn" class="btn btn-primary">Play Again</button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>How to Play:</h3>
+            <ul>
+                <li>Build up the foundation piles from Ace to King in each suit</li>
+                <li>Build down the tableau piles in alternating colors</li>
+                <li>Click the stock pile to draw new cards</li>
+                <li>Drag and drop cards to move them between piles</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
