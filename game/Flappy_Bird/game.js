@@ -55,7 +55,7 @@ class UserManager {
         
         const user = this.users[this.currentUser];
         user.gamesPlayed++;
-        user.totalScore += score*score;
+        user.totalScore += score;
         
         if (score > user.bestScore) {
             user.bestScore = score;
@@ -75,7 +75,7 @@ class UserManager {
         
         this.leaderboard.push({
             username: username,
-            score: score,
+            score: score*score*score,
             date: new Date().toISOString()
         });
         
