@@ -15,6 +15,19 @@
     .game-card p { color: #555; font-size: 0.95rem; }
     .game-card a { display: inline-block; margin-top: 1rem; text-decoration: none; color: white; background: #007acc; padding: 0.5rem 1rem; border-radius: 5px; }
   </style>
+  <script>
+    const correctCode = "bhaicharaontop"; // Set your secret code here
+  
+    function checkCode() {
+      const userCode = prompt("Enter the secret code to access the game hub:");
+      if (userCode !== correctCode) {
+        alert("Incorrect code. Access denied.");
+        document.body.innerHTML = "<h2 style='text-align:center; margin-top:20vh;'>🔒 Access Denied</h2>";
+      }
+    }
+  
+    window.onload = checkCode;
+  </script>
 </head>
 <body>
   <h1>🎮 Bhaichara Game Hub</h1>
