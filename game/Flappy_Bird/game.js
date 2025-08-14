@@ -419,7 +419,7 @@ class FlappyBird {
             y: this.height / 2,
             width: 40,
             height: 30,
-            velocity: 0,
+            velocity: 5,
             gravity: 0.3,
             jumpPower: -5,
             rotation: 0
