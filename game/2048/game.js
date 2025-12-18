@@ -1,572 +1,293 @@
-// Game constants
 const GRID_SIZE = 4;
-const CELL_SIZE = 85;
-const CELL_GAP = 15;
+const CELL_SIZE = 95; // Must match CSS
+const CELL_GAP = 15;  // Must match CSS
 
-// Game state
-let grid = [];
+// State
+let grid = []; // 4x4 array storing Tile objects or null
 let score = 0;
-let bestScore = 0;
-let moves = 0;
-let gameWon = false;
+let bestScore = localStorage.getItem('2048-best') || 0;
 let gameOver = false;
-let moveHistory = [];
-let canUndo = false;
+let gameWon = false;
 
-// DOM elements
-const gridContainer = document.getElementById('grid');
-const scoreElement = document.getElementById('score');
-const bestElement = document.getElementById('best');
-const movesElement = document.getElementById('moves');
-const gameOverlay = document.getElementById('gameOverlay');
-const winOverlay = document.getElementById('winOverlay');
+// DOM
+const gridElement = document.getElementById('grid'); // Background grid
+const tileContainer = document.getElementById('tile-container'); // Moving tiles
+const scoreEl = document.getElementById('score');
+const bestEl = document.getElementById('best');
+const overlay = document.getElementById('gameOverlay');
+const overlayTitle = document.getElementById('overlayTitle');
+const overlayMsg = document.getElementById('overlayMessage');
 
-// Initialize the game
+class Tile {
+    constructor(x, y, value) {
+        this.x = x;
+        this.y = y;
+        this.value = value;
+        this.element = document.createElement('div');
+        this.element.classList.add('tile');
+        this.element.classList.add('new-tile');
+        this.element.dataset.val = value;
+        this.element.textContent = value;
+        tileContainer.appendChild(this.element);
+        this.updatePosition();
+
+        // Remove pop animation class after animation
+        setTimeout(() => this.element.classList.remove('new-tile'), 200);
+    }
+
+    updatePosition() {
+        const xPos = this.x * (CELL_SIZE + CELL_GAP);
+        const yPos = this.y * (CELL_SIZE + CELL_GAP);
+        this.element.style.transform = `translate(${xPos}px, ${yPos}px)`;
+    }
+
+    setValue(newValue) {
+        this.value = newValue;
+        this.element.dataset.val = newValue;
+        this.element.textContent = newValue;
+        // Pulse animation
+        this.element.classList.add('merged-tile');
+        setTimeout(() => this.element.classList.remove('merged-tile'), 200);
+    }
+
+    remove() {
+        // Wait for transition if needed, or remove immediately
+        // For merge, we want to remove the 'old' tile immediately from DOM 
+        // to avoid visual glitch, or fade it out. 
+        // Simple approach: Remove immediately
+        this.element.remove();
+    }
+}
+
 function initGame() {
-    loadBestScore();
-    createGrid();
-    addInitialTiles();
-    updateDisplay();
-    setupEventListeners();
-}
-
-// Create the grid structure
-function createGrid() {
-    gridContainer.innerHTML = '';
-    grid = [];
-    
-    for (let row = 0; row < GRID_SIZE; row++) {
-        grid[row] = [];
-        for (let col = 0; col < GRID_SIZE; col++) {
-            // Create grid cell
-            const cell = document.createElement('div');
-            cell.className = 'grid-cell';
-            cell.style.gridRow = row + 1;
-            cell.style.gridColumn = col + 1;
-            gridContainer.appendChild(cell);
-            
-            grid[row][col] = 0;
-        }
-    }
-}
-
-// Add initial tiles
-function addInitialTiles() {
-    addRandomTile();
-    addRandomTile();
-}
-
-// Add a random tile (2 or 4)
-function addRandomTile() {
-    const emptyCells = [];
-    
-    for (let row = 0; row < GRID_SIZE; row++) {
-        for (let col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][col] === 0) {
-                emptyCells.push({ row, col });
-            }
-        }
-    }
-    
-    if (emptyCells.length > 0) {
-        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        const value = Math.random() < 0.9 ? 2 : 4;
-        grid[randomCell.row][randomCell.col] = value;
-        createTile(randomCell.row, randomCell.col, value);
-    }
-}
-
-// Create a tile element
-function createTile(row, col, value) {
-    const tile = document.createElement('div');
-    tile.className = `tile tile-${value}`;
-    tile.textContent = value;
-    tile.style.gridRow = row + 1;
-    tile.style.gridColumn = col + 1;
-    tile.dataset.row = row;
-    tile.dataset.col = col;
-    tile.dataset.value = value;
-    
-    gridContainer.appendChild(tile);
-}
-
-// Move tiles in a direction
-function moveTiles(direction) {
-    if (gameOver) return false;
-    
-    // Save current state for undo
-    saveState();
-    
-    let moved = false;
-    const oldGrid = JSON.parse(JSON.stringify(grid));
-    
-    switch (direction) {
-        case 'up':
-            moved = moveUp();
-            break;
-        case 'down':
-            moved = moveDown();
-            break;
-        case 'left':
-            moved = moveLeft();
-            break;
-        case 'right':
-            moved = moveRight();
-            break;
-    }
-    
-    if (moved) {
-        moves++;
-        addRandomTile();
-        updateDisplay();
-        checkGameState();
-        canUndo = true;
-    }
-    
-    return moved;
-}
-
-// Move tiles up
-function moveUp() {
-    let moved = false;
-    
-    for (let col = 0; col < GRID_SIZE; col++) {
-        const column = [];
-        
-        // Collect non-zero values
-        for (let row = 0; row < GRID_SIZE; row++) {
-            if (grid[row][col] !== 0) {
-                column.push(grid[row][col]);
-            }
-        }
-        
-        // Merge adjacent equal values
-        for (let i = 0; i < column.length - 1; i++) {
-            if (column[i] === column[i + 1]) {
-                column[i] *= 2;
-                score += column[i];
-                column.splice(i + 1, 1);
-            }
-        }
-        
-        // Fill with zeros
-        while (column.length < GRID_SIZE) {
-            column.push(0);
-        }
-        
-        // Update grid and check if moved
-        for (let row = 0; row < GRID_SIZE; row++) {
-            if (grid[row][col] !== column[row]) {
-                moved = true;
-            }
-            grid[row][col] = column[row];
-        }
-    }
-    
-    if (moved) {
-        updateTiles();
-    }
-    
-    return moved;
-}
-
-// Move tiles down
-function moveDown() {
-    let moved = false;
-    
-    for (let col = 0; col < GRID_SIZE; col++) {
-        const column = [];
-        
-        // Collect non-zero values
-        for (let row = GRID_SIZE - 1; row >= 0; row--) {
-            if (grid[row][col] !== 0) {
-                column.push(grid[row][col]);
-            }
-        }
-        
-        // Merge adjacent equal values
-        for (let i = 0; i < column.length - 1; i++) {
-            if (column[i] === column[i + 1]) {
-                column[i] *= 2;
-                score += column[i];
-                column.splice(i + 1, 1);
-            }
-        }
-        
-        // Fill with zeros
-        while (column.length < GRID_SIZE) {
-            column.push(0);
-        }
-        
-        // Update grid and check if moved
-        for (let row = 0; row < GRID_SIZE; row++) {
-            if (grid[GRID_SIZE - 1 - row][col] !== column[row]) {
-                moved = true;
-            }
-            grid[GRID_SIZE - 1 - row][col] = column[row];
-        }
-    }
-    
-    if (moved) {
-        updateTiles();
-    }
-    
-    return moved;
-}
-
-// Move tiles left
-function moveLeft() {
-    let moved = false;
-    
-    for (let row = 0; row < GRID_SIZE; row++) {
-        const rowArray = [];
-        
-        // Collect non-zero values
-        for (let col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][col] !== 0) {
-                rowArray.push(grid[row][col]);
-            }
-        }
-        
-        // Merge adjacent equal values
-        for (let i = 0; i < rowArray.length - 1; i++) {
-            if (rowArray[i] === rowArray[i + 1]) {
-                rowArray[i] *= 2;
-                score += rowArray[i];
-                rowArray.splice(i + 1, 1);
-            }
-        }
-        
-        // Fill with zeros
-        while (rowArray.length < GRID_SIZE) {
-            rowArray.push(0);
-        }
-        
-        // Update grid and check if moved
-        for (let col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][col] !== rowArray[col]) {
-                moved = true;
-            }
-            grid[row][col] = rowArray[col];
-        }
-    }
-    
-    if (moved) {
-        updateTiles();
-    }
-    
-    return moved;
-}
-
-// Move tiles right
-function moveRight() {
-    let moved = false;
-    
-    for (let row = 0; row < GRID_SIZE; row++) {
-        const rowArray = [];
-        
-        // Collect non-zero values
-        for (let col = GRID_SIZE - 1; col >= 0; col--) {
-            if (grid[row][col] !== 0) {
-                rowArray.push(grid[row][col]);
-            }
-        }
-        
-        // Merge adjacent equal values
-        for (let i = 0; i < rowArray.length - 1; i++) {
-            if (rowArray[i] === rowArray[i + 1]) {
-                rowArray[i] *= 2;
-                score += rowArray[i];
-                rowArray.splice(i + 1, 1);
-            }
-        }
-        
-        // Fill with zeros
-        while (rowArray.length < GRID_SIZE) {
-            rowArray.push(0);
-        }
-        
-        // Update grid and check if moved
-        for (let col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][GRID_SIZE - 1 - col] !== rowArray[col]) {
-                moved = true;
-            }
-            grid[row][GRID_SIZE - 1 - col] = rowArray[col];
-        }
-    }
-    
-    if (moved) {
-        updateTiles();
-    }
-    
-    return moved;
-}
-
-// Update tile elements to match grid
-function updateTiles() {
-    // Remove all existing tiles
-    const tiles = document.querySelectorAll('.tile');
-    tiles.forEach(tile => tile.remove());
-    
-    // Create new tiles based on grid
-    for (let row = 0; row < GRID_SIZE; row++) {
-        for (let col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][col] !== 0) {
-                createTile(row, col, grid[row][col]);
-            }
-        }
-    }
-}
-
-// Check game state (win/lose)
-function checkGameState() {
-    // Check for win
-    for (let row = 0; row < GRID_SIZE; row++) {
-        for (let col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][col] === 2048 && !gameWon) {
-                gameWon = true;
-                showWinScreen();
-            }
-        }
-    }
-    
-    // Check for game over
-    if (isGameOver()) {
-        gameOver = true;
-        showGameOverScreen();
-    }
-    
-    // Update achievements
-    updateAchievements();
-}
-
-// Check if game is over
-function isGameOver() {
-    // Check if there are empty cells
-    for (let row = 0; row < GRID_SIZE; row++) {
-        for (let col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][col] === 0) {
-                return false;
-            }
-        }
-    }
-    
-    // Check if any moves are possible
-    for (let row = 0; row < GRID_SIZE; row++) {
-        for (let col = 0; col < GRID_SIZE; col++) {
-            const currentValue = grid[row][col];
-            
-            // Check right neighbor
-            if (col < GRID_SIZE - 1 && grid[row][col + 1] === currentValue) {
-                return false;
-            }
-            
-            // Check bottom neighbor
-            if (row < GRID_SIZE - 1 && grid[row + 1][col] === currentValue) {
-                return false;
-            }
-        }
-    }
-    
-    return true;
-}
-
-// Show win screen
-function showWinScreen() {
-    winOverlay.classList.add('active');
-}
-
-// Show game over screen
-function showGameOverScreen() {
-    gameOverlay.classList.add('active');
-}
-
-// Continue game after winning
-function continueGame() {
-    winOverlay.classList.remove('active');
-}
-
-// Restart game
-function restartGame() {
-    gameWon = false;
-    gameOver = false;
+    tileContainer.innerHTML = '';
+    grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
     score = 0;
-    moves = 0;
-    canUndo = false;
-    moveHistory = [];
-    
-    gameOverlay.classList.remove('active');
-    winOverlay.classList.remove('active');
-    
-    createGrid();
-    addInitialTiles();
-    updateDisplay();
-    updateAchievements();
+    gameOver = false;
+    gameWon = false;
+    overlay.classList.remove('active');
+    updateScore();
+
+    // Spawn 2 tiles
+    spawnTile();
+    spawnTile();
+    setupInput();
 }
 
-// Save current state for undo
-function saveState() {
-    moveHistory.push({
-        grid: JSON.parse(JSON.stringify(grid)),
-        score: score,
-        moves: moves
-    });
-    
-    // Keep only last 10 moves
-    if (moveHistory.length > 10) {
-        moveHistory.shift();
-    }
-}
-
-// Undo last move
-function undoMove() {
-    if (moveHistory.length > 0 && canUndo) {
-        const lastState = moveHistory.pop();
-        grid = lastState.grid;
-        score = lastState.score;
-        moves = lastState.moves;
-        
-        updateTiles();
-        updateDisplay();
-        
-        if (moveHistory.length === 0) {
-            canUndo = false;
+function spawnTile() {
+    const emptyCells = [];
+    for (let x = 0; x < GRID_SIZE; x++) {
+        for (let y = 0; y < GRID_SIZE; y++) {
+            if (!grid[x][y]) emptyCells.push({ x, y });
         }
     }
+
+    if (emptyCells.length === 0) return;
+
+    const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    const value = Math.random() < 0.9 ? 2 : 4;
+    grid[randomCell.x][randomCell.y] = new Tile(randomCell.x, randomCell.y, value);
+
+    // Check game over
+    if (emptyCells.length === 1 && !canMove()) {
+        endGame(false);
+    }
 }
 
-// Update display
-function updateDisplay() {
-    scoreElement.textContent = score.toLocaleString();
-    movesElement.textContent = moves.toLocaleString();
-    
+function updateScore() {
+    scoreEl.textContent = score;
     if (score > bestScore) {
         bestScore = score;
-        bestElement.textContent = bestScore.toLocaleString();
-        saveBestScore();
+        localStorage.setItem('2048-best', bestScore);
     }
+    bestEl.textContent = bestScore;
 }
 
-// Update achievements
-function updateAchievements() {
-    const achievements = document.querySelectorAll('.achievement');
-    const maxTile = getMaxTile();
-    
-    achievements.forEach(achievement => {
-        const tileValue = parseInt(achievement.dataset.tile);
-        if (maxTile >= tileValue) {
-            achievement.classList.add('unlocked');
-        } else {
-            achievement.classList.remove('unlocked');
+function canMove() {
+    for (let x = 0; x < GRID_SIZE; x++) {
+        for (let y = 0; y < GRID_SIZE; y++) {
+            if (!grid[x][y]) return true;
+            const val = grid[x][y].value;
+            // Check neighbors
+            if (x < GRID_SIZE - 1 && grid[x + 1][y] && grid[x + 1][y].value === val) return true;
+            if (y < GRID_SIZE - 1 && grid[x][y + 1] && grid[x][y + 1].value === val) return true;
         }
-    });
+    }
+    return false;
 }
 
-// Get maximum tile value
-function getMaxTile() {
-    let max = 0;
-    for (let row = 0; row < GRID_SIZE; row++) {
-        for (let col = 0; col < GRID_SIZE; col++) {
-            if (grid[row][col] > max) {
-                max = grid[row][col];
+function endGame(won) {
+    gameOver = true;
+    overlayTitle.textContent = won ? "YOU WON!" : "GAME OVER";
+    overlayMsg.textContent = won ? "2048 Unlocked!" : "Better luck next time.";
+    overlay.classList.add('active');
+}
+
+// Logic: Move & Merge
+// Directions: 0:Up, 1:Right, 2:Down, 3:Left
+async function move(direction) {
+    if (gameOver) return;
+
+    let moved = false;
+    const mergedTiles = []; // Track merged positions this turn to prevent double merge
+
+    const traverseX = direction === 1 ? [3, 2, 1, 0] : [0, 1, 2, 3];
+    const traverseY = direction === 2 ? [3, 2, 1, 0] : [0, 1, 2, 3];
+
+    // Helper to get vector
+    const vector = { x: 0, y: 0 };
+    if (direction === 0) vector.y = -1; // Up
+    if (direction === 2) vector.y = 1;  // Down
+    if (direction === 3) vector.x = -1; // Left
+    if (direction === 1) vector.x = 1;  // Right
+
+    // We need to iterate in the correct order to push tiles
+    // If moving Right (x+), iterate x from 3 to 0
+    // If moving Down (y+), iterate y from 3 to 0
+
+    // Logic Loop
+    for (const x of traverseX) {
+        for (const y of traverseY) {
+            const tile = grid[x][y];
+            if (!tile) continue;
+
+            let nextX = x;
+            let nextY = y;
+            let dist = 0;
+
+            // Project forward
+            while (true) {
+                const checkX = nextX + vector.x;
+                const checkY = nextY + vector.y;
+
+                // Bounds check
+                if (checkX < 0 || checkX >= GRID_SIZE || checkY < 0 || checkY >= GRID_SIZE) break;
+
+                const neighbor = grid[checkX][checkY];
+                if (!neighbor) {
+                    // Empty, move into it
+                    nextX = checkX;
+                    nextY = checkY;
+                    dist++;
+                } else if (neighbor.value === tile.value && !mergedTiles.includes(neighbor)) {
+                    // Merge!
+                    nextX = checkX;
+                    nextY = checkY;
+                    dist++;
+                    break; // Stop after finding merge target
+                } else {
+                    // Blocked
+                    break;
+                }
+            }
+
+            if (dist > 0) {
+                moved = true;
+
+                const targetTile = grid[nextX][nextY];
+
+                if (targetTile) {
+                    // MERGE
+                    // 1. Move current tile visually to target
+                    tile.x = nextX;
+                    tile.y = nextY;
+                    tile.updatePosition();
+
+                    // 2. Wait for animation then update logic? 
+                    // To keep it snappy (150ms), we update logic immediately but handle DOM removal carefully.
+
+                    // We remove the old DOM element of the 'target' immediately? No, we merge INTO it.
+                    // Actually, usually you move 'tile' to 'target', then remove 'tile' and upgrade 'target'.
+
+                    // Let's discard 'tile' (current) and keep 'target' (destination), updating target's value
+                    // But visually, 'tile' needs to slide INTO 'target'.
+
+                    // Wait for slide (pseudo-async purely visual)
+                    grid[x][y] = null; // Remove from old slot
+
+                    // Note: targetTile is already in grid[nextX][nextY].
+                    // We need to mark it as merged so it doesn't merge again this turn
+                    mergedTiles.push(targetTile);
+
+                    // Visual Hack: 
+                    // The 'tile' slides ON TOP of 'targetTile'.
+                    tile.element.style.zIndex = 100;
+
+                    setTimeout(() => {
+                        tile.remove(); // Remove the slider
+                        targetTile.setValue(targetTile.value * 2);
+                        score += targetTile.value;
+                        updateScore();
+                        if (targetTile.value === 2048 && !gameWon) {
+                            gameWon = true;
+                            endGame(true);
+                        }
+                    }, 150);
+
+                } else {
+                    // MOVE into empty
+                    grid[x][y] = null;
+                    grid[nextX][nextY] = tile;
+                    tile.x = nextX;
+                    tile.y = nextY;
+                    tile.updatePosition();
+                }
             }
         }
     }
-    return max;
+
+    if (moved) {
+        // Wait for animation to finish slightly before spawning new tile?
+        // Or spawn immediately? Standard is slightly after move starts.
+        setTimeout(() => {
+            spawnTile();
+            if (!canMove() && !gameWon) endGame(false);
+        }, 150);
+    }
 }
 
-// Save best score to localStorage
-function saveBestScore() {
-    localStorage.setItem('2048BestScore', bestScore);
-}
+function setupInput() {
+    window.addEventListener('keydown', handleKey);
+    let startX, startY;
 
-// Load best score from localStorage
-function loadBestScore() {
-    const saved = localStorage.getItem('2048BestScore');
-    bestScore = saved ? parseInt(saved) : 0;
-}
+    // Swipe
+    document.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        e.preventDefault(); // Lock scroll
+    }, { passive: false });
 
-// Setup event listeners
-function setupEventListeners() {
-    // Keyboard controls
-    document.addEventListener('keydown', (e) => {
-        switch (e.key) {
-            case 'ArrowUp':
-                e.preventDefault();
-                moveTiles('up');
-                break;
-            case 'ArrowDown':
-                e.preventDefault();
-                moveTiles('down');
-                break;
-            case 'ArrowLeft':
-                e.preventDefault();
-                moveTiles('left');
-                break;
-            case 'ArrowRight':
-                e.preventDefault();
-                moveTiles('right');
-                break;
-            case 'r':
-            case 'R':
-                restartGame();
-                break;
-            case 'u':
-            case 'U':
-                undoMove();
-                break;
-        }
-    });
-    
-    // Touch controls
-    let startX, startY, startTime;
-    
-    gridContainer.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        startX = touch.clientX;
-        startY = touch.clientY;
-        startTime = Date.now();
-    });
-    
-    gridContainer.addEventListener('touchend', (e) => {
-        e.preventDefault();
+    document.addEventListener('touchend', e => {
         if (!startX || !startY) return;
-        
-        const touch = e.changedTouches[0];
-        const endX = touch.clientX;
-        const endY = touch.clientY;
-        const deltaX = endX - startX;
-        const deltaY = endY - startY;
-        const deltaTime = Date.now() - startTime;
-        
-        // Minimum swipe distance and time
-        if (deltaTime < 500 && (Math.abs(deltaX) > 30 || Math.abs(deltaY) > 30)) {
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                // Horizontal swipe
-                if (deltaX > 0) {
-                    moveTiles('right');
-                } else {
-                    moveTiles('left');
-                }
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+
+        if (Math.max(absDx, absDy) > 30) {
+            if (absDx > absDy) {
+                move(dx > 0 ? 1 : 3);
             } else {
-                // Vertical swipe
-                if (deltaY > 0) {
-                    moveTiles('down');
-                } else {
-                    moveTiles('up');
-                }
+                move(dy > 0 ? 2 : 0);
             }
         }
-        
-        startX = startY = null;
-    });
-    
-    // Prevent context menu on right click
-    gridContainer.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
+        startX = null;
+        startY = null;
     });
 }
 
-// Initialize the game when the page loads
-window.addEventListener('load', initGame);
+function handleKey(e) {
+    if (gameOver) return;
+    switch (e.key) {
+        case 'ArrowUp': move(0); break;
+        case 'ArrowRight': move(1); break;
+        case 'ArrowDown': move(2); break;
+        case 'ArrowLeft': move(3); break;
+    }
+}
+
+// Global functions for buttons
+window.restartGame = initGame;
+
+// Start
+initGame();

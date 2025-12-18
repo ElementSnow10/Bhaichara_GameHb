@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bhaichara Game Hub</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="locked">
 
     <!-- Access Modal -->
@@ -29,15 +31,16 @@
 
         <div class="container">
             <div class="game-grid">
-                
+
                 <a href="game/Tetris/index.html" class="game-card">
+                    <span class="badge">Trending</span>
                     <div class="card-image">
                         <img src="game/Tetris/thumbnail.svg" alt="Tetris">
                     </div>
                     <div class="game-info">
                         <h2>Tetris</h2>
                         <p>The legendary block stacker. Now with ghost pieces, wall kicks, and particle effects!</p>
-                        <span class="play-btn">Play Now</span>
+                        <span class="play-btn">Enter Zone</span>
                     </div>
                 </a>
 
@@ -48,18 +51,19 @@
                     <div class="game-info">
                         <h2>Flappy Bird</h2>
                         <p>Dodge pipes and test your sanity in this addictive side-scroller remake.</p>
-                        <span class="play-btn">Play Now</span>
+                        <span class="play-btn">Enter Zone</span>
                     </div>
                 </a>
 
                 <a href="game/2048/index.html" class="game-card">
+                    <span class="badge">Remastered</span>
                     <div class="card-image">
                         <img src="game/2048/thumbnail.svg" alt="2048">
                     </div>
                     <div class="game-info">
                         <h2>2048</h2>
                         <p>Slide and combine numbers to reach the ultimate tile. Math meets strategy.</p>
-                        <span class="play-btn">Play Now</span>
+                        <span class="play-btn">Enter Zone</span>
                     </div>
                 </a>
 
@@ -70,7 +74,7 @@
                     <div class="game-info">
                         <h2>Red Ball</h2>
                         <p>Physics-based platformer adventure. Roll, jump, and bounce through levels.</p>
-                        <span class="play-btn">Play Now</span>
+                        <span class="play-btn">Enter Zone</span>
                     </div>
                 </a>
 
@@ -81,7 +85,7 @@
                     <div class="game-info">
                         <h2>Tic Tac Toe</h2>
                         <p>The classic X and O strategy game. Challenge a friend or the AI.</p>
-                        <span class="play-btn">Play Now</span>
+                        <span class="play-btn">Enter Zone</span>
                     </div>
                 </a>
 
@@ -92,7 +96,7 @@
                     <div class="game-info">
                         <h2>Mystic Realms</h2>
                         <p>A text-based rpg adventure. Your choices shape the story.</p>
-                        <span class="play-btn">Play Now</span>
+                        <span class="play-btn">Enter Zone</span>
                     </div>
                 </a>
 
@@ -103,7 +107,7 @@
                     <div class="game-info">
                         <h2>Color Burst</h2>
                         <p>Match colors and trigger explosive combos in this fast-paced arcade game.</p>
-                        <span class="play-btn">Play Now</span>
+                        <span class="play-btn">Enter Zone</span>
                     </div>
                 </a>
 
@@ -127,7 +131,7 @@
         function checkAccess() {
             const userCode = codeInput.value;
             const errorMsg = document.getElementById('errorMsg');
-            
+
             if (userCode === CORRECT_CODE) {
                 // Success: Unlock
                 document.body.classList.remove('locked');
@@ -139,12 +143,12 @@
                 setTimeout(() => {
                     errorMsg.classList.remove('visible');
                 }, 2000);
-                
+
                 codeInput.value = '';
                 codeInput.focus();
             }
         }
     </script>
 </body>
-</html>
 
+</html>
