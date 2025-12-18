@@ -1,88 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bhaichara Game Hub</title>
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f9f9f9; margin: 0; padding: 2rem; text-align: center; }
-    h1 { color: #222; margin-bottom: 2rem; }
-    .game-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; }
-    .game-card { background: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 300px; padding: 1rem; transition: transform 0.2s; }
-    .game-card:hover { transform: scale(1.03); }
-    .game-card img { width: 100%; border-radius: 8px; }
-    .game-card h2 { margin: 0.5rem 0; color: #007acc; }
-    .game-card p { color: #555; font-size: 0.95rem; }
-    .game-card a { display: inline-block; margin-top: 1rem; text-decoration: none; color: white; background: #007acc; padding: 0.5rem 1rem; border-radius: 5px; }
-  </style>
-  <script>
-    const correctCode = "bhaicharaontop"; // Set your secret code here
-  
-    function checkCode() {
-      const userCode = prompt("Enter the secret code to access the game hub:");
-      if (userCode !== correctCode) {
-        alert("Incorrect code. Access denied.");
-        document.body.innerHTML = "<h2 style='text-align:center; margin-top:20vh;'>🔒 Access Denied</h2>";
-      }
-    }
-  
-    window.onload = checkCode;
-  </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Bhaichara Game Hub</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h1>🎮 Bhaichara Game Hub</h1>
-      <div class="game-grid">
-      <div class="game-card">
-        <img src="game/Flappy_Bird/thumbnail.svg" alt="Flappy Bird Thumbnail" />
-        <h2>Flappy Bird</h2>
-        <p>Dodge pipes and test your reflexes in this classic side-scroller remake.</p>
-        <a href="game/Flappy_Bird/index.html">Play Now</a>
-      </div>
-      <div class="game-card">
-        <img src="game/TicTacToe/thumbnail.svg" alt="Tic Tac Toe Thumbnail" />
-        <h2>Tic Tac Toe</h2>
-        <p>Classic strategy game with customizable player names and score tracking.</p>
-        <a href="game/TicTacToe/index.html">Play Now</a>
-      </div>
-      <div class="game-card">
-        <img src="game/RedBall/thumbnail.svg" alt="Red Ball Adventure Thumbnail" />
-        <h2>Red Ball Adventure</h2>
-        <p>Physics-based platformer with 5 challenging levels. Navigate obstacles and collect coins!</p>
-        <a href="game/RedBall/index.html">Play Now</a>
-      </div>
-      <div class="game-card">
-        <img src="game/TextAdventure/thumbnail.svg" alt="Mystic Realms Text Adventure Thumbnail" />
-        <h2>Mystic Realms</h2>
-        <p>Embark on an epic text adventure with rich storytelling, unique characters, and branching storylines!</p>
-        <a href="game/TextAdventure/index.html">Play Now</a>
-      </div>
-      <div class="game-card">
-        <img src="game/Tetris/thumbnail.svg" alt="Tetris Classic Block Puzzle Thumbnail" />
-        <h2>Tetris</h2>
-        <p>Classic block puzzle game with modern graphics, smooth animations, and responsive controls!</p>
-        <a href="game/Tetris/index.html">Play Now</a>
-      </div>
-      <div class="game-card">
-        <img src="game/2048/thumbnail.svg" alt="2048 Number Puzzle Game Thumbnail" />
-        <h2>2048</h2>
-        <p>Addictive sliding tile puzzle game with beautiful graphics, smooth animations, and achievement system!</p>
-        <a href="game/2048/index.html">Play Now</a>
-      </div>
-      <div class="game-card">
-        <img src="game/ColorBurst/thumbnail.svg" alt="Color Burst Arcade Game Thumbnail" />
-        <h2>Color Burst</h2>
-        <p>Exciting arcade game where you guide colorful blocks to their matching zones with power-ups and combos!</p>
-        <a href="game/ColorBurst/index.html">Play Now</a>
-      </div>
-      <!-- Add more game cards below -->
-      <!--
-      <div class="game-card">
-        <img src="AnotherGame/thumbnail.png" alt="Another Game Thumbnail" />
-        <h2>Another Game</h2>
-        <p>Short description of the game goes here.</p>
-        <a href="AnotherGame/index.html">Play Now</a>
-      </div>
-      -->
+<body class="locked">
+
+    <!-- Access Modal -->
+    <div id="access-modal">
+        <div class="modal-content">
+            <h2>🔒 Access Hub</h2>
+            <div class="input-group">
+                <input type="password" id="secretCode" placeholder="Enter Secret Code" autocomplete="off">
+                <button onclick="checkAccess()">Enter</button>
+            </div>
+            <p class="error-msg" id="errorMsg">Incorrect code. Try again.</p>
+        </div>
     </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <header>
+            <h1>🎮 <span>Bhaichara</span> Game Hub</h1>
+            <p class="subtitle">Your ultimate destination for classic and modern browser games. Enter the zone.</p>
+        </header>
+
+        <div class="container">
+            <div class="game-grid">
+                
+                <a href="game/Tetris/index.html" class="game-card">
+                    <div class="card-image">
+                        <img src="game/Tetris/thumbnail.svg" alt="Tetris">
+                    </div>
+                    <div class="game-info">
+                        <h2>Tetris</h2>
+                        <p>The legendary block stacker. Now with ghost pieces, wall kicks, and particle effects!</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+
+                <a href="game/Flappy_Bird/index.html" class="game-card">
+                    <div class="card-image">
+                        <img src="game/Flappy_Bird/thumbnail.svg" alt="Flappy Bird">
+                    </div>
+                    <div class="game-info">
+                        <h2>Flappy Bird</h2>
+                        <p>Dodge pipes and test your sanity in this addictive side-scroller remake.</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+
+                <a href="game/2048/index.html" class="game-card">
+                    <div class="card-image">
+                        <img src="game/2048/thumbnail.svg" alt="2048">
+                    </div>
+                    <div class="game-info">
+                        <h2>2048</h2>
+                        <p>Slide and combine numbers to reach the ultimate tile. Math meets strategy.</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+
+                <a href="game/RedBall/index.html" class="game-card">
+                    <div class="card-image">
+                        <img src="game/RedBall/thumbnail.svg" alt="Red Ball">
+                    </div>
+                    <div class="game-info">
+                        <h2>Red Ball</h2>
+                        <p>Physics-based platformer adventure. Roll, jump, and bounce through levels.</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+
+                <a href="game/TicTacToe/index.html" class="game-card">
+                    <div class="card-image">
+                        <img src="game/TicTacToe/thumbnail.svg" alt="Tic Tac Toe">
+                    </div>
+                    <div class="game-info">
+                        <h2>Tic Tac Toe</h2>
+                        <p>The classic X and O strategy game. Challenge a friend or the AI.</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+
+                <a href="game/TextAdventure/index.html" class="game-card">
+                    <div class="card-image">
+                        <img src="game/TextAdventure/thumbnail.svg" alt="Text Adventure">
+                    </div>
+                    <div class="game-info">
+                        <h2>Mystic Realms</h2>
+                        <p>A text-based rpg adventure. Your choices shape the story.</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+
+                <a href="game/ColorBurst/index.html" class="game-card">
+                    <div class="card-image">
+                        <img src="game/ColorBurst/thumbnail.svg" alt="Color Burst">
+                    </div>
+                    <div class="game-info">
+                        <h2>Color Burst</h2>
+                        <p>Match colors and trigger explosive combos in this fast-paced arcade game.</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Bhaichara Game Hub. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const CORRECT_CODE = "bhaicharaontop";
+        const codeInput = document.getElementById('secretCode');
+
+        // Check code on Enter key
+        codeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkAccess();
+        });
+
+        function checkAccess() {
+            const userCode = codeInput.value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (userCode === CORRECT_CODE) {
+                // Success: Unlock
+                document.body.classList.remove('locked');
+                // Optional: Save session
+                // sessionStorage.setItem('unlocked', 'true');
+            } else {
+                // Error: Shake and show msg
+                errorMsg.classList.add('visible');
+                setTimeout(() => {
+                    errorMsg.classList.remove('visible');
+                }, 2000);
+                
+                codeInput.value = '';
+                codeInput.focus();
+            }
+        }
+    </script>
 </body>
 </html>
+
